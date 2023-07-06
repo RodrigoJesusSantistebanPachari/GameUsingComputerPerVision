@@ -47,6 +47,8 @@ with mp_hands.Hands(min_detection_confidence=0.8, min_tracking_confidence=0.5) a
 
 
         ret, frame = cap.read()
+        # revert frame because it is mirrored
+        frame = cv2.flip(frame, 1)
 
         image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         image.flags.writeable = False
@@ -91,8 +93,8 @@ with mp_hands.Hands(min_detection_confidence=0.8, min_tracking_confidence=0.5) a
                 hand_.change_all_coordinates(current_landmarks)
             # Draw the hand
             hand_.draw()
-            # Draw the square
-            square.draw()
+        # Draw the square
+        square.draw()
 
         cv2.imshow('Hand Tracking', image)
 

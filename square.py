@@ -39,14 +39,17 @@ class Square:
         glBindVertexArray(0)
 
     def move(self, vertice):
-        # Move the square randomly
-        random_translation = (np.random.rand(3) - 0.5) * 0.1
-
-        print("Random trnslation: ", random_translation)
         print("Vertice: ", vertice)
+        temp = self.vertices + vertice
+        print("Temp: ", temp)
 
+        if any(temp[:, 0] > 1) or any(temp[:, 0] < -1):
+            vertice[0] = 0
+        elif any(temp[:, 1] > 1) or any(temp[:, 1] < -1):
+            vertice[1] = 0
+        
         self.vertices += vertice
-        print("Final vertices: ", self.vertices)
+
 
         glBindBuffer(GL_ARRAY_BUFFER, self.vbo)
         glBufferSubData(GL_ARRAY_BUFFER, 0, self.vertices.nbytes, self.vertices)

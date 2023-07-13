@@ -7,6 +7,7 @@ from shader import Shader
 from geometry import Line
 from hand import Hand
 from square import Square
+from cube import Cube
 from background import Background
 import numpy as np
 
@@ -32,6 +33,9 @@ hand_ = Hand(shader_program.get_program_number(), hand_color)
 # Create the square object
 square_color = [0.5, 0.5, 0.5]  # Gray color
 square = Square(shader_program.get_program_number(), square_color)
+
+cube_color = [0.4, 0.5, 0.2]  # Gray color
+cube = Cube(shader_program.get_program_number(), cube_color)
 
 
 # OpenCV initialization
@@ -86,7 +90,7 @@ with mp_hands.Hands(min_detection_confidence=0.8, min_tracking_confidence=0.5) a
                 current_landmarks[:, 1] = (current_landmarks[:, 1] * 2) + 1
                 current_landmarks[:, 2] = (current_landmarks[:, 2] * 2) - 1
                 
-                print("current_landmarks:\n", current_landmarks, "\n")
+                #print("current_landmarks:\n", current_landmarks, "\n")
 
                 square_collided = False
                 for landmark in current_landmarks:
@@ -100,6 +104,20 @@ with mp_hands.Hands(min_detection_confidence=0.8, min_tracking_confidence=0.5) a
                 if square_collided:
                     square.move(hand_.movement)
 
+                cube_collided = False
+                for landmark in current_landmarks:
+                    if (
+                        cube.vertices[0, 0] <= landmark[0] <= cube.vertices[2, 0] and
+                        cube.vertices[0, 1] <= landmark[1] <= cube.vertices[2, 1] and
+                        cube.vertices[0, 2] <= landmark[2] <= cube.vertices[2, 2]
+                    ):
+                        cube_collided = True
+                        break
+
+                if cube_collided:
+                    print("HAY COLISION")
+                    cube.move(hand_.movement)
+
                 
 
                 mp_drawing.draw_landmarks(image, hand, mp_hands.HAND_CONNECTIONS)
@@ -107,9 +125,10 @@ with mp_hands.Hands(min_detection_confidence=0.8, min_tracking_confidence=0.5) a
                 hand_.change_all_coordinates(current_landmarks)
             # Draw the hand
             hand_.draw()
+            cube.draw()
         # Draw the square
         square.draw()
-
+        cube.draw()
 
         cv2.imshow('Hand Tracking', image)
 
